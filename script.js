@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     formStatus.textContent = "Message sent successfully! We'll be in touch soon.";
                     formStatus.className = "form-status success";
-                    contactForm.reset();
+                    contactForm.style.display = 'none'; // Hide the form fields
                 } else {
                     const result = await response.json();
                     if (Object.hasOwn(result, 'errors')) {

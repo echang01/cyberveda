@@ -3,10 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollBg = document.querySelector('.scroll-bg');
     
     // Mouse move effect (interactive glow)
-    let mouseX = 0;
-    let mouseY = 0;
-    let glowX = 0;
-    let glowY = 0;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let glowX = mouseX;
+    let glowY = mouseY;
 
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;

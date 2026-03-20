@@ -126,10 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formStatus.className = "form-status error";
             }
 
-            // Clear message after a delay
-            setTimeout(() => {
-                formStatus.textContent = "";
-            }, 6000);
+            // Message now stays on screen permanently per user request
         });
     }
 });

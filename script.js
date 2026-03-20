@@ -90,25 +90,46 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Contact Form Submission (Simulation)
+    // Contact Form Submission (Real submission via Formspree AJAX)
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             formStatus.textContent = "Sending...";
             formStatus.className = "form-status";
             
-            // In a real scenario, you'd fetch() to Formspree or a backend here
-            // Simulation delay:
-            setTimeout(() => {
-                formStatus.textContent = "Message sent successfully! We'll be in touch soon.";
-                formStatus.className = "form-status success";
-                contactForm.reset();
+            const data = new FormData(contactForm);
+            
+            try {
+                const response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    body: data,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
                 
-                // Reset status message after a few seconds
-                setTimeout(() => {
-                    formStatus.textContent = "";
-                }, 5000);
-            }, 1000);
+                if (response.ok) {
+                    formStatus.textContent = "Message sent successfully! We'll be in touch soon.";
+                    formStatus.className = "form-status success";
+                    contactForm.reset();
+                } else {
+                    const result = await response.json();
+                    if (Object.hasOwn(result, 'errors')) {
+                        formStatus.textContent = result.errors.map(error => error.message).join(", ");
+                    } else {
+                        formStatus.textContent = "Oops! There was a problem submitting your form.";
+                    }
+                    formStatus.className = "form-status error";
+                }
+            } catch (error) {
+                formStatus.textContent = "Oops! There was a problem submitting your form.";
+                formStatus.className = "form-status error";
+            }
+
+            // Clear message after a delay
+            setTimeout(() => {
+                formStatus.textContent = "";
+            }, 6000);
         });
     }
 });

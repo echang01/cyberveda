@@ -1,47 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
     const cursorGlow = document.getElementById('cursor-glow');
     const scrollBg = document.querySelector('.scroll-bg');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.getElementById('nav-links');
+    const contactForm = document.getElementById('contact-form');
+    const formStatus = document.getElementById('form-status');
     
-    // Mouse move effect (interactive glow)
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let glowX = mouseX;
-    let glowY = mouseY;
+    // Mobile Menu Toggle
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.replace('fa-bars', 'fa-xmark');
+            } else {
+                icon.classList.replace('fa-xmark', 'fa-bars');
+            }
+        });
+    }
 
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
+    // Close mobile menu when a link is clicked
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            icon.classList.replace('fa-xmark', 'fa-bars');
+        });
     });
 
-    // Smooth pursuit for the glow effect
-    function animateGlow() {
-        // Offset by 150px to center the 300x300px glow div on the cursor
-        glowX += (mouseX - glowX) * 0.1;
-        glowY += (mouseY - glowY) * 0.1;
-        
-        cursorGlow.style.transform = `translate(${glowX - 150}px, ${glowY - 150}px)`;
-        requestAnimationFrame(animateGlow);
+    // Mouse move effect (interactive glow) - only on desktop
+    if (window.innerWidth > 768) {
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let glowX = mouseX;
+        let glowY = mouseY;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateGlow() {
+            glowX += (mouseX - glowX) * 0.1;
+            glowY += (mouseY - glowY) * 0.1;
+            
+            cursorGlow.style.transform = `translate(${glowX - 150}px, ${glowY - 150}px)`;
+            requestAnimationFrame(animateGlow);
+        }
+        animateGlow();
     }
-    animateGlow();
 
     // Scroll effect to slowly change background color
     window.addEventListener('scroll', () => {
-        // Calculate scroll percentage
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
         const scrollPercent = docHeight > 0 ? window.scrollY / docHeight : 0;
         
-        // Define color states
-        // Top: #0a0a1a (Deep dark blue/black)
-        // Middle: #1e1b4b (Deep violet/indigo)
-        // Bottom: #172554 (Deep royal blue)
-        
-        // Very basic linear interpolation for color progression
-        // You can tweak these RGB values to get the exact dark blue/purple mix wanted
         const rTop = Math.floor(10 + (scrollPercent * 20));
         const gTop = Math.floor(10 + (scrollPercent * 10));
         const bTop = Math.floor(26 + (scrollPercent * 30));
         
-        const rMid = Math.floor(30 + (scrollPercent * 110)); // Shifts more purple
+        const rMid = Math.floor(30 + (scrollPercent * 110)); 
         const gMid = Math.floor(27 + (scrollPercent * 10));
         const bMid = Math.floor(75 + (scrollPercent * 60));
         
@@ -71,4 +89,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Contact Form Submission (Simulation)
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            formStatus.textContent = "Sending...";
+            formStatus.className = "form-status";
+            
+            // In a real scenario, you'd fetch() to Formspree or a backend here
+            // Simulation delay:
+            setTimeout(() => {
+                formStatus.textContent = "Message sent successfully! We'll be in touch soon.";
+                formStatus.className = "form-status success";
+                contactForm.reset();
+                
+                // Reset status message after a few seconds
+                setTimeout(() => {
+                    formStatus.textContent = "";
+                }, 5000);
+            }, 1000);
+        });
+    }
 });
